@@ -106,3 +106,208 @@ See `StackOverflowDemo.java` for a sample usage of the StackOverflow system.
 - **Add moderation:** Implement admin/moderator roles for content management.
 
 ---
+
+
+📌 StackOverflow – Clean Low Level Design (LLD)
+1️⃣ High-level Design Philosophy
+
+Posts and Answers are first-class entities
+
+Users do not own posts (no containment)
+
+Posts reference users via authorId
+
+StackOverflow acts as an orchestrator/facade, not a data store
+
+Repositories manage persistence & retrieval
+
+Optimized for read-heavy workloads
+
+2️⃣ Clean UML Diagram (Mermaid – README compatible)
+classDiagram
+    class StackOverflow {
+        +askQuestion(userId, title, content)
+        +answerQuestion(userId, questionId, content)
+        +vote(postId, userId, voteType)
+        +acceptAnswer(questionId, answerId)
+    }
+
+    class User {
+        +userId
+        +name
+        +reputation
+    }
+
+    class Post {
+        <<abstract>>
+        +postId
+        +content
+        +authorId
+        +voteCount
+        +createdAt
+    }
+
+    class Question {
+        +title
+        +acceptedAnswerId
+    }
+
+    class Answer {
+        +questionId
+        +isAccepted
+    }
+
+    class UserRepository {
+        +getUser(userId)
+    }
+
+    class PostRepository {
+        +getQuestion(questionId)
+        +getAnswers(questionId)
+        +savePost(post)
+    }
+
+    StackOverflow --> UserRepository
+    StackOverflow --> PostRepository
+
+    Post <|-- Question
+    Post <|-- Answer
+
+    Question "1" --> "*" Answer : has
+    Post --> User : authorId
+
+
+✅ This UML is clean, scalable, and interview-ready
+
+3️⃣ Why NOT store posts inside User?
+❌ Bad Design: User → List<Post>
+
+Problems:
+
+StackOverflow is read-heavy, not user-centric
+
+Common queries:
+
+“Show answers for this question”
+
+“Sort answers by votes”
+
+Traversing User → Posts → Answers is inefficient
+
+Deleting a user should NOT delete posts
+
+Breaks aggregate boundaries
+
+📌 Posts must exist independently of user lifecycle
+
+4️⃣ Why Posts SHOULD reference Users
+✅ Correct Design: Post → authorId
+
+Benefits:
+
+Fast read path
+
+Clean ownership semantics
+
+Supports [deleted user] scenarios
+
+Mirrors real StackOverflow DB schema
+
+Avoids deep object traversal
+
+5️⃣ Why StackOverflow should NOT store all posts/users
+❌ Bad Design: StackOverflow contains all Users, Posts, Answers
+
+Problems:
+
+Becomes a God Object
+
+Hard to scale
+
+Hard to shard
+
+Hard to test
+
+Violates Single Responsibility Principle
+
+6️⃣ Correct Role of StackOverflow Class
+✅ StackOverflow as a Facade / Orchestrator
+StackOverflow
+- Coordinates workflows
+- Enforces business rules
+- Delegates data access to repositories
+- Does NOT store data
+
+Example:
+askQuestion(userId, title, content)
+→ validate user
+→ create Question
+→ save via PostRepository
+
+7️⃣ Aggregate Root Boundaries (Important for Interviews)
+Aggregate	Responsibility
+User	Identity, reputation
+Post (Question/Answer)	Content, votes, author
+StackOverflow	Orchestration
+Repository	Persistence
+
+📌 Never require loading User aggregate to understand a Post
+
+8️⃣ Read-heavy Optimization Justification
+
+StackOverflow traffic pattern:
+
+~90% reads
+
+~10% writes
+
+Design optimizes:
+
+Question → Answers → Author
+
+Vote-based sorting
+
+Accepted answer lookup
+
+9️⃣ How this maps to Database Design
+USERS
+- user_id (PK)
+- name
+- reputation
+
+POSTS
+- post_id (PK)
+- type (QUESTION / ANSWER)
+- content
+- author_id (FK)
+- vote_count
+- created_at
+
+QUESTIONS
+- post_id (PK, FK)
+- title
+- accepted_answer_id
+
+ANSWERS
+- post_id (PK, FK)
+- question_id (FK)
+- is_accepted
+
+
+✅ Matches real StackOverflow schema
+
+🔑 Interview-ready Summary (Copy-Paste)
+
+“Posts and answers are first-class aggregates that reference users via IDs. Users do not own posts. StackOverflow acts as an orchestrator, while repositories manage persistence. This design optimizes read-heavy access patterns, avoids tight coupling, and scales cleanly.”
+
+10️⃣ Common Follow-up Questions (Prep)
+Question	Expected Direction
+How do you handle deleted users?	Keep posts, show [deleted]
+How do you handle concurrency in voting?	Atomic counters / optimistic locking
+How do you scale answers?	Pagination, caching
+How do you enforce one accepted answer?	Transactional update
+✅ TL;DR (One-liner)
+
+Best design:
+
+Posts reference users, repositories manage data, StackOverflow orchestrates logic.
