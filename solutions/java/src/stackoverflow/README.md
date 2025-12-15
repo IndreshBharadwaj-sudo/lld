@@ -108,7 +108,7 @@ See `StackOverflowDemo.java` for a sample usage of the StackOverflow system.
 ---
 
 
-📌 StackOverflow – Clean Low Level Design (LLD)
+≥≥ 📌 StackOverflow – Clean Low Level Design (LLD)
 1️⃣ High-level Design Philosophy
 
 Posts and Answers are first-class entities
@@ -311,3 +311,119 @@ How do you enforce one accepted answer?	Transactional update
 Best design:
 
 Posts reference users, repositories manage data, StackOverflow orchestrates logic.
+
+≥≥ In stack overflow design should I keep questions comments array inside user class or only keep references of users in the posts
+
+Short answer:
+❌ Do NOT keep questions/comments arrays inside User.
+✅ Keep only user references (authorId) inside Post / Comment.
+
+Now let’s explain this clearly and interview-correctly, so you can remember it forever.
+
+✅ Correct Design (What you SHOULD do)
+Relationships
+
+Post (Question / Answer) → references User via authorId
+
+Comment → references User via authorId
+
+User → does NOT contain arrays of posts/comments
+
+User
+  - userId
+  - name
+  - reputation
+
+Post
+  - postId
+  - content
+  - authorId   → User
+
+Comment
+  - commentId
+  - content
+  - authorId   → User
+
+❌ Incorrect Design (What you should NOT do)
+User
+  - List<Question>
+  - List<Answer>
+  - List<Comment>
+
+
+This looks intuitive but is architecturally wrong.
+
+🧠 Why NOT store posts/comments inside User?
+1️⃣ StackOverflow is post-centric, not user-centric
+
+Most common reads:
+
+“Show answers for this question”
+
+“Show comments under this post”
+
+“Sort answers by votes”
+
+❌ None of these start from User
+✅ All start from Post
+
+If posts live inside users → you must scan users → terrible design.
+
+2️⃣ Users can be deleted; posts must survive
+
+Real StackOverflow behavior:
+
+User deleted → posts remain ([deleted user])
+
+If posts are owned by user:
+
+Delete user → posts disappear ❌
+
+Or leave dangling references ❌
+
+Keeping authorId solves this cleanly.
+
+3️⃣ Violates Aggregate Root principle (DDD)
+
+In proper LLD:
+
+User is an aggregate
+
+Post is an independent aggregate
+
+Rule:
+
+One aggregate should not own another aggregate’s lifecycle.
+
+Storing posts inside users breaks this rule.
+
+4️⃣ Causes performance & memory issues
+
+Imagine a top contributor:
+
+10,000 answers
+
+5,000 comments
+
+Loading a User object would:
+
+Pull huge collections into memory
+
+Slow down unrelated flows
+
+❌ Bad for scalability
+✅ Repositories + queries are better
+
+5️⃣ Makes persistence & sharding harder
+
+Real systems shard by:
+
+Posts
+
+Time
+
+Votes
+
+They do not shard by users containing everything.
+
+Your design should map cleanly to DB tables.
