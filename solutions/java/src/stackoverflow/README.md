@@ -427,3 +427,131 @@ Votes
 They do not shard by users containing everything.
 
 Your design should map cleanly to DB tables.
+
+≥≥≥≥ Should Post contain User user object or just String userId and then I should get user from userRegistry
+
+Short answer (interview-correct):
+👉 Post should store userId, NOT the full User object.
+👉 Fetch the User via UserRepository / UserRegistry when needed.
+
+Now let’s explain why, in a way that will impress an interviewer and also help you design clean systems.
+
+✅ Correct Design (Recommended)
+class Post {
+    String postId;
+    String content;
+    String authorId;   // userId only
+}
+
+class UserRepository {
+    User getUser(String userId);
+}
+
+❌ Incorrect Design (Tight coupling)
+class Post {
+    User author;   // ❌ bad
+}
+
+🧠 Why Post should NOT contain User object
+1️⃣ Loose coupling (MOST IMPORTANT)
+
+If Post contains User:
+
+Any change in User affects Post
+
+Leads to tight coupling
+
+Harder to evolve independently
+
+With userId:
+
+Post is independent
+
+User lifecycle is separate
+
+2️⃣ Aggregate boundaries (DDD principle)
+
+User is an aggregate root
+
+Post is another aggregate root
+
+Rule:
+
+One aggregate should reference another by ID, not by object.
+
+This is textbook DDD and interviewers love this answer.
+
+3️⃣ Performance & memory efficiency
+
+If Post contains User:
+
+Loading a post loads the full user
+
+Wasteful in read-heavy systems
+
+Using userId:
+
+Fetch user only when required
+
+Allows caching & lazy loading
+
+4️⃣ Real-world scenario: deleted users
+
+StackOverflow behavior:
+
+User deleted → posts remain
+
+Author shown as [deleted]
+
+This is easy with:
+
+authorId = "deleted"
+
+
+Hard with:
+
+User user = null ❌
+
+5️⃣ Serialization & persistence
+
+Storing objects inside objects:
+
+Complicates DB schema
+
+Causes circular references
+
+Makes caching harder
+
+Storing IDs:
+
+Clean DB tables
+
+Clean JSON
+
+Clean APIs
+
+✅ When is it OK to store User inside Post?
+
+Only in very limited cases:
+
+In-memory DTOs
+
+Read models
+
+View projections
+
+Example:
+
+class PostView {
+    Post post;
+    User author;   // OK here
+}
+
+
+📌 This is NOT your domain model.
+
+🧠 Interview-ready explanation (memorize this)
+
+“Post and User are separate aggregates.
+A post should reference its author by userId only, and the full User should be fetched via a repository when needed.
+This keeps the model loosely coupled, scalable, and consistent with real-world systems like StackOverflow.”
