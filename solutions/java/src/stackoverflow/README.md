@@ -555,3 +555,96 @@ class PostView {
 “Post and User are separate aggregates.
 A post should reference its author by userId only, and the full User should be fetched via a repository when needed.
 This keeps the model loosely coupled, scalable, and consistent with real-world systems like StackOverflow.”
+
+≥≥≥≥≥ can i keep comments inside post in stackoverlow design abstract class Post implements Votable{
+    private int postId;
+    private String content;
+    private String authorUserId;
+    private long createdAt;
+    private Map<String,VoteType> voters;
+    private List<Comment> comments;
+
+Yes — you can keep comments inside Post, and in fact this is the correct design for StackOverflow-like systems, as long as you understand the trade-offs.
+
+Let’s go through this cleanly, interview-ready, and with real-world reasoning.
+
+✅ Correct: Keeping comments inside Post
+abstract class Post implements Votable {
+    private int postId;
+    private String content;
+    private String authorUserId;
+    private long createdAt;
+    private Map<String, VoteType> voters;
+    private List<Comment> comments;
+}
+
+
+This design is valid and commonly used.
+
+🧠 Why this design makes sense
+1️⃣ Domain truth (most important)
+
+On StackOverflow:
+
+Comments do not exist independently
+
+A comment always belongs to exactly one post
+
+If the post is deleted → comments are deleted
+
+This is a strong ownership relationship.
+
+➡️ That means Post is the aggregate root, and Comment is a child entity.
+
+2️⃣ Correct Aggregate modeling (DDD)
+
+Post = aggregate root
+
+Comment = entity inside aggregate
+
+Rule:
+
+All access to Comment should go through Post.
+
+This matches your design.
+
+3️⃣ Simplifies invariants & rules
+
+Examples:
+
+Max comments per post
+
+Comment ordering
+
+Comment deletion rules
+
+Comment visibility
+
+All can be enforced inside Post.
+
+4️⃣ Avoids unnecessary global registries
+
+If comments were stored separately:
+
+You’d need CommentRepository
+
+Extra lookups
+
+More coordination
+
+For StackOverflow scale, comments are always accessed via post, so embedding is correct.
+
+🧠 Interview-ready explanation (memorize)
+
+“In StackOverflow, comments are owned by posts and don’t exist independently, so modeling them inside Post is correct.
+Post acts as the aggregate root, and Comment is a child entity.
+We store only authorUserId in comments and control access via the post to preserve invariants.”
+
+This answer is exactly what interviewers want.
+
+✅ Final verdict
+Design Choice	Verdict
+Post contains List<Comment>	✅ Correct
+Comment has postId only	❌ Not needed
+Post is aggregate root	✅ Correct
+Comment has User object	❌ Wrong
