@@ -648,3 +648,42 @@ Post contains List<Comment>	✅ Correct
 Comment has postId only	❌ Not needed
 Post is aggregate root	✅ Correct
 Comment has User object	❌ Wrong
+
+≥≥≥≥ Lets say I'm designing stack overflow for lld, I am using post registry and user registry to get users and posts, now my question is should I keep String userId and String postId inside vote or not? Alternatively I can just make Vote having voteId etc. and posts have a vote array and user have a post array
+
+This is an excellent LLD question — you’re thinking at the right abstraction level for SDE-2+.
+
+Short answer (interview-correct)
+
+👉 Yes, Vote should store userId and postId.
+
+
+≥≥≥≥≥ So if a user is deleted I should let the user registry take care of it and not make the user id null in vote class?
+
+Yes — exactly right, and this is a very strong design instinct 👍
+You should NOT set userId = null in Vote.
+
+👉 User deletion must be handled by UserRegistry / UserService, not by mutating votes.
+2️⃣ Violates immutability of historical facts
+
+A vote is a historical event:
+
+“User X voted on Post Y at time T”
+
+Deleting a user should not rewrite history.
+
+StackOverflow, Reddit, GitHub all follow this.
+
+3️⃣ Breaks analytics & moderation
+
+Examples:
+
+Vote fraud detection
+
+Abuse patterns
+
+Rate limiting
+
+Rollback / disputes
+
+All rely on user identity remaining intact.
