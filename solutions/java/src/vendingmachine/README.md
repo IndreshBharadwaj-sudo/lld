@@ -93,3 +93,11 @@ See your main or demo class for a sample usage and simulation of the vending mac
 - **Singleton Pattern:** For ensuring a single instance of the VendingMachine.
 
 ---
+
+## Learnings We got while practising
+Better to keep variables like selected product,inserted coin in transaction context which will be managed by vending machine.
+Good design to pass inventory and initial state in constructor easier to mock and test else it will be tight coupling.
+For exception handling you can make your own exception classes.
+You can use something like threadLocal to keep different transactions concurrently.
+You need to add synchronized when compound operations.
+Observer not needed for inventory, however can be added if need of logging, notification etc.
