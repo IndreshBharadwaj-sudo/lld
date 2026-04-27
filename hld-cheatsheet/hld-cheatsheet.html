@@ -1,0 +1,1712 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Design Interview - Cheat Sheet</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 100%;
+            margin: 0;
+            padding: 15px;
+            background: #f5f5f5;
+        }
+        h1 {
+            color: #1a73e8;
+            font-size: 1.8em;
+            text-align: center;
+            border-bottom: 3px solid #1a73e8;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #fff;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-size: 1.3em;
+            margin-top: 30px;
+        }
+        h3 {
+            color: #1a73e8;
+            border-left: 4px solid #1a73e8;
+            padding-left: 10px;
+            font-size: 1.1em;
+        }
+        h4 {
+            color: #5f6368;
+            margin: 15px 0 8px 0;
+        }
+        .summary-box {
+            background: #e8f0fe;
+            border-left: 4px solid #1a73e8;
+            padding: 15px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+        }
+        .key-concept {
+            background: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .key-concept h4 {
+            color: #1a73e8;
+            margin-top: 0;
+            border-bottom: 1px solid #e0e0e0;
+            padding-bottom: 5px;
+        }
+        .mindmap {
+            background: #1a1a2e;
+            color: #00ff88;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.75em;
+            overflow-x: auto;
+            white-space: pre;
+            margin: 15px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            font-size: 0.9em;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        th {
+            background: #1a73e8;
+            color: white;
+            padding: 12px 8px;
+            text-align: left;
+        }
+        td {
+            padding: 10px 8px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        tr:nth-child(even) {
+            background: #f8f9fa;
+        }
+        code {
+            background: #f1f3f4;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        .emoji {
+            font-size: 1.2em;
+        }
+        ul {
+            padding-left: 20px;
+        }
+        li {
+            margin: 5px 0;
+        }
+        .pros { color: #0d904f; }
+        .cons { color: #d93025; }
+        .highlight {
+            background: #fef7e0;
+            padding: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #f9ab00;
+        }
+        .quick-ref {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .quick-ref h2 {
+            background: none;
+            padding: 0;
+            margin-top: 0;
+        }
+        .quick-ref table {
+            background: rgba(255,255,255,0.1);
+        }
+        .quick-ref th {
+            background: rgba(0,0,0,0.2);
+        }
+        .quick-ref td {
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            color: white;
+        }
+        .toc {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .toc a {
+            color: #1a73e8;
+            text-decoration: none;
+        }
+        .toc a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<h1>📚 System Design Interview<br>Complete Cheat Sheet</h1>
+<p style="text-align: center; color: #5f6368;">By Alex Yu | Quick Revision Notes</p>
+
+<div class="toc">
+    <h3>📑 Table of Contents</h3>
+    <ol>
+        <li><a href="#ch1">Scale From Zero To Millions of Users</a></li>
+        <li><a href="#ch2">Back-of-the-envelope Estimation</a></li>
+        <li><a href="#ch3">A Framework for System Design Interviews</a></li>
+        <li><a href="#ch4">Design A Rate Limiter</a></li>
+        <li><a href="#ch5">Design Consistent Hashing</a></li>
+        <li><a href="#ch6">Design A Key-Value Store</a></li>
+        <li><a href="#ch7">Design A Unique ID Generator</a></li>
+        <li><a href="#ch8">Design A URL Shortener</a></li>
+        <li><a href="#ch9">Design A Web Crawler</a></li>
+        <li><a href="#ch10">Design A Notification System</a></li>
+        <li><a href="#ch11">Design A News Feed System</a></li>
+        <li><a href="#ch12">Design A Chat System</a></li>
+        <li><a href="#ch13">Design A Search Autocomplete System</a></li>
+        <li><a href="#ch14">Design YouTube</a></li>
+        <li><a href="#ch15">Design Google Drive</a></li>
+        <li><a href="#quickref">Quick Reference & Patterns</a></li>
+    </ol>
+</div>
+
+<!-- CHAPTER 1 -->
+<h2 id="ch1">📖 Chapter 1: Scale From Zero To Millions of Users</h2>
+
+<div class="summary-box">
+    <strong>📋 SUMMARY</strong><br>
+    Covers the evolutionary journey of scaling a system from a single server to distributed architecture. Key trade-off: <strong>Simplicity vs. Scalability</strong> - each step adds complexity but enables handling more traffic.
+    <br><br>
+    <strong>Evolution:</strong> Single Server → Separate DB → Load Balancer → DB Replication → Cache → CDN → Stateless → Data Centers → Message Queues → Sharding
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Vertical vs Horizontal Scaling</h4>
+    <table>
+        <tr><th>Vertical (Scale Up)</th><th>Horizontal (Scale Out)</th></tr>
+        <tr><td>Add more CPU, RAM to one server</td><td>Add more servers</td></tr>
+        <tr><td>Simple but has hard limits</td><td>No hard limit</td></tr>
+        <tr><td>Single point of failure</td><td>Requires load balancer</td></tr>
+    </table>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Load Balancer</h4>
+    <ul>
+        <li>Distributes traffic across multiple servers</li>
+        <li>Provides failover capability</li>
+        <li>Algorithms: Round Robin, Least Connections, IP Hash</li>
+        <li>Examples: HAProxy, Nginx, F5</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🎯 DB Choice – System Design Cheat Sheet</h4>
+
+    <p><strong>📊 Data Types:</strong><br>
+    Structured → users, transactions, orders<br>
+    Semi-structured → JSON profiles, catalogs<br>
+    Unstructured → logs, images, videos
+    </p>
+
+    <p><strong>🔍 Access Pattern:</strong><br>
+    SQL → joins, aggregations, complex queries<br>
+    NoSQL → key-based access, simple queries
+    </p>
+
+    <p><strong>📈 Scale:</strong><br>
+    Read-heavy / write-heavy / massive data volume
+    </p>
+
+    <p><strong>🔒 Consistency:</strong><br>
+    SQL → strong consistency (ACID on primary)<br>
+    Replicas → may be eventually consistent (lag)<br>
+    NoSQL → eventual consistency by default (can be tuned stronger)
+    </p>
+
+    <p><strong>🧱 SQL Databases:</strong><br>
+    PostgreSQL, MySQL, Oracle, SQL Server<br>
+    Best for structured data, transactions, joins<br>
+    Scaling → vertical → read replicas → cache → sharding
+    </p>
+
+    <p><strong>🌐 NoSQL Databases:</strong><br>
+    MongoDB, Cassandra, DynamoDB, Redis, HBase<br>
+    Best for high scale, flexible schema, low latency<br>
+    Scaling → built-in sharding + replication
+    </p>
+
+    <p><strong>⚖️ SQL vs NoSQL Consistency:</strong><br>
+    SQL → single primary + coordination → strong consistency<br>
+    NoSQL → distributed writes + less coordination → eventual consistency
+    </p>
+
+    <p><strong>🔥 Why Writes Are Harder to Scale In SQL DBs:</strong><br>
+    Reads → easy (served from replicas)<br>
+    Writes → require coordination (transactions, constraints, indexes)<br>
+    Sharding issues → cross-shard joins, distributed transactions, hot partitions<br>
+    Key idea → Reads = copy problem, Writes = coordination problem
+    </p>
+
+    <p><strong>🚀 Hybrid Approach:</strong><br>
+    SQL → transactions / source of truth<br>
+    Redis → caching<br>
+    NoSQL → logs, analytics, high-scale data
+    </p>
+
+    <p><strong>🎯 Summary:</strong><br>
+    SQL → correctness + relationships<br>
+    NoSQL → scalability + flexibility<br>
+    Real systems → hybrid approach
+    </p>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Database Replication (Master-Slave)</h4>
+    <ul>
+        <li><strong>Master:</strong> Handles all writes</li>
+        <li><strong>Slaves:</strong> Handle reads (can have multiple)</li>
+        <li><strong>Trade-off:</strong> Replication lag vs. read scalability</li>
+        <li><strong>Failover:</strong> Promote slave to master if master fails</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Database Replication (Master-Slave)</h4>
+    <ul>
+        <li><strong>Master:</strong> Handles all writes</li>
+        <li><strong>Slaves:</strong> Handle reads (can have multiple)</li>
+        <li><strong>Trade-off:</strong> Replication lag vs. read scalability</li>
+        <li><strong>Failover:</strong> Promote slave to master if master fails</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Cache</h4>
+    <ul>
+        <li>Temporary storage for frequently accessed data</li>
+        <li><strong>Types:</strong> Redis, Memcached</li>
+        <li><strong>Strategies:</strong> Cache-aside, Write-through, Write-behind</li>
+        <li><strong>Eviction:</strong> LRU (Least Recently Used), LFU</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 CDN (Content Delivery Network)</h4>
+    <ul>
+        <li>Geographically distributed servers for static content like images, videos, CSS, JavaScript files, etc.</li>
+        <li>Reduces latency for end users</li>
+        <li><strong>Push CDN:</strong> Upload content proactively</li>
+        <li><strong>Pull CDN:</strong> Fetch on first request</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Stateless Architecture</h4>
+    <ul>
+        <li>No session data stored on web servers</li>
+        <li>Session state moved to shared storage (Redis)</li>
+        <li>Any server can handle any request</li>
+        <li>Enables easy horizontal scaling</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Message Queue</h4>
+    <ul>
+        <li>Decouples components for async processing</li>
+        <li>Examples: RabbitMQ, Kafka, Amazon SQS</li>
+        <li>Producers → Queue → Consumers</li>
+        <li>Enables independent scaling</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Data Centers</h4>
+    <ul>
+        <li>To geo route data</li>
+        <li>Also in case of any disaster</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Logging, metrics, automation</h4>
+    <p><strong>📊 Logging, Metrics & Automation:</strong><br>
+        Needed at scale for reliability, visibility, and productivity
+        </p>
+        
+        <p><strong>📝 Logging:</strong><br>
+        Track errors and system events<br>
+        Centralized logs → easier debugging & monitoring
+        </p>
+        
+        <p><strong>📈 Metrics:</strong><br>
+        System health + business insights<br>
+        Host → CPU, memory, disk<br>
+        System → DB/cache performance<br>
+        Business → DAU, retention, revenue
+        </p>
+        
+        <p><strong>⚙️ Automation:</strong><br>
+        CI/CD, build, test, deploy pipelines<br>
+        Reduces manual work, detects issues early
+        </p>
+        
+        <p><strong>📩 Message Queue:</strong><br>
+        Decouples services, improves scalability & failure handling
+        </p>
+        
+        <p><strong>🚀 Insight:</strong><br>
+        As scale grows → DB load increases → need monitoring + async processing + data tier scaling
+        </p>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Database Sharding</h4>
+    <ul>
+        <li>Horizontal partitioning across multiple DBs</li>
+        <li>Sharding key selection is critical</li>
+        <li><strong>Challenges:</strong> Joins, resharding, celebrity problem</li>
+        <li><strong>Types:</strong> Hash-based, Range-based, Directory-based</li>
+    </ul>
+</div>
+
+<div class="mindmap">
+                        SINGLE SERVER
+                             │
+                      SEPARATE DB
+                             │
+        ┌────────────────────┼────────────────────┐
+        │                    │                    │
+   LOAD BALANCER      DB REPLICATION          CACHE
+        │                    │                    │
+        └────────────────────┼────────────────────┘
+                             │
+                           CDN
+                             │
+                    STATELESS ARCH
+                             │
+        ┌────────────────────┼────────────────────┐
+        │                    │                    │
+   DATA CENTERS       MESSAGE QUEUE          SHARDING
+</div>
+
+<!-- CHAPTER 2 -->
+<h2 id="ch2">📖 Chapter 2: Back-of-the-envelope Estimation</h2>
+
+<div class="summary-box">
+    <strong>📋 SUMMARY</strong><br>
+    Quick estimation techniques for system capacity planning. Master power of 2s, latency numbers, and availability calculations. Key skill: translate business requirements into technical specifications.
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Power of 2s (Data Volume)</h4>
+    <table>
+        <tr><th>Power</th><th>Value</th><th>Name</th></tr>
+        <tr><td>10</td><td>1 Thousand</td><td>1 KB</td></tr>
+        <tr><td>20</td><td>1 Million</td><td>1 MB</td></tr>
+        <tr><td>30</td><td>1 Billion</td><td>1 GB</td></tr>
+        <tr><td>40</td><td>1 Trillion</td><td>1 TB</td></tr>
+        <tr><td>50</td><td>1 Quadrillion</td><td>1 PB</td></tr>
+    </table>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Latency Numbers Every Programmer Should Know</h4>
+<table>
+    <tr><th>Operation</th><th>Time</th></tr>
+
+    <tr><td>L1 cache reference</td><td>0.5 ns</td></tr>
+    <tr><td>Branch mispredict</td><td>5 ns</td></tr>
+    <tr><td>L2 cache reference</td><td>7 ns</td></tr>
+    <tr><td>Mutex lock/unlock</td><td>100 ns</td></tr>
+    <tr><td>Main memory reference</td><td>100 ns</td></tr>
+
+    <tr><td>Compress 1 KB with Zippy</td><td>10 μs</td></tr>
+    <tr><td>Send 2 KB over 1 Gbps network</td><td>20 μs</td></tr>
+    <tr><td>Read 1 MB sequentially from memory</td><td>250 μs</td></tr>
+    <tr><td>Round trip within same datacenter</td><td>500 μs</td></tr>
+
+    <tr><td>Disk seek</td><td>10 ms</td></tr>
+    <tr><td>Read 1 MB sequentially from network</td><td>10 ms</td></tr>
+    <tr><td>Read 1 MB sequentially from disk</td><td>30 ms</td></tr>
+    <tr><td>Round trip CA → Netherlands → CA</td><td>150 ms</td></tr>
+</table>
+    <div class="highlight" style="margin-top: 10px;">
+        <strong>Key Takeaway:</strong> Memory is fast, disk is slow. Avoid disk seeks!
+    </div>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Availability Numbers</h4>
+    <table>
+        <tr><th>Availability %</th><th>Downtime/Year</th><th>Downtime/Day</th></tr>
+        <tr><td>99%</td><td>3.65 days</td><td>14.4 min</td></tr>
+        <tr><td>99.9%</td><td>8.76 hours</td><td>1.44 min</td></tr>
+        <tr><td>99.99%</td><td>52.6 minutes</td><td>8.64 sec</td></tr>
+        <tr><td>99.999%</td><td>5.26 minutes</td><td>864 ms</td></tr>
+    </table>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 QPS Estimation Example</h4>
+    <ul>
+        <li>Daily Active Users (DAU): 100 million</li>
+        <li>Each user makes 2 queries/day</li>
+        <li><strong>QPS = 100M × 2 / 86400 ≈ 2,300 QPS</strong></li>
+        <li><strong>Peak QPS = QPS × 2 = 4,600 QPS</strong></li>
+    </ul>
+</div>
+
+<!-- CHAPTER 3 -->
+<h2 id="ch3">📖 Chapter 3: A Framework for System Design Interviews</h2>
+
+<div class="summary-box">
+    <strong>📋 SUMMARY</strong><br>
+    4-step framework for tackling any system design interview. Key: structured thinking and communication. Never dive into solutions immediately. Trade-off: <strong>Depth vs. Breadth</strong> - focus on critical components.
+</div>
+
+<div class="key-concept">
+    <h4>🔹 The 4-Step Framework</h4>
+    <table>
+        <tr><th>Step</th><th>Time</th><th>Focus</th></tr>
+        <tr><td><strong>Step 1:</strong> Understand & Scope</td><td>3-10 min</td><td>Ask questions, define requirements</td></tr>
+        <tr><td><strong>Step 2:</strong> High-Level Design</td><td>10-15 min</td><td>Draw diagrams, get buy-in</td></tr>
+        <tr><td><strong>Step 3:</strong> Deep Dive</td><td>10-25 min</td><td>2-3 critical components, trade-offs</td></tr>
+        <tr><td><strong>Step 4:</strong> Wrap Up</td><td>3-5 min</td><td>Summary, improvements, monitoring</td></tr>
+    </table>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Do's and Don'ts</h4>
+    <p class="pros"><strong>✅ Do's:</strong></p>
+    <ul>
+        <li>Ask for clarification</li>
+        <li>Understand requirements first</li>
+        <li>Communicate with interviewer</li>
+        <li>Suggest multiple approaches</li>
+    </ul>
+    <p class="cons"><strong>❌ Don'ts:</strong></p>
+    <ul>
+        <li>Jump into solution without clarifying</li>
+        <li>Think in silence</li>
+        <li>Get stuck on a single component</li>
+    </ul>
+</div>
+
+<!-- CHAPTER 4 -->
+<h2 id="ch4">📖 Chapter 4: Design A Rate Limiter</h2>
+
+<div class="summary-box">
+    <strong>📋 SUMMARY</strong><br>
+    For now, we only need to know that the API gateway is a middleware that supports rate limiting.<br>
+    Controls the rate of traffic from clients. Prevents DoS attacks, reduces cost, prevents overload. Trade-offs: <strong>Accuracy vs. Performance</strong> (distributed sync overhead), <strong>User Experience vs. Protection</strong>.
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Rate Limiting Algorithms</h4>
+    <table>
+        <tr><th>Algorithm</th><th>Pros</th><th>Cons</th></tr>
+        <tr><td><strong>Token Bucket</strong></td><td>Memory efficient, allows bursts</td><td>Tuning is challenging</td></tr>
+        <tr><td><strong>Leaking Bucket</strong></td><td>Smooth output, memory efficient</td><td>Burst fills queue, starvation</td></tr>
+        <tr><td><strong>Fixed Window of requests per time unit</strong></td><td>Memory efficient, simple</td><td>Burst at window edges (2x)</td></tr>
+        <tr><td><strong>Sliding Window Log</strong></td><td>Very accurate</td><td>Memory intensive</td></tr>
+        <tr><td><strong>Sliding Window Counter</strong></td><td>Smooths burst, efficient</td><td>Approximate</td></tr>
+    </table>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Token Bucket (Most Popular)</h4>
+    <ul>
+        <li>Tokens added at fixed rate to bucket</li>
+        <li>Request consumes a token; rejected if empty</li>
+        <li>Bucket size = burst capacity</li>
+        <li><strong>Used by:</strong> Amazon, Stripe</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Leaky Bucket (Smooth Rate Limiting)</h4>
+    <ul>
+        <li>Requests added to bucket (queue)</li>
+        <li>Processed at constant fixed rate</li>
+        <li>Excess requests dropped if bucket is full</li>
+        <li>Ensures steady output (no bursts)</li>
+        <li><strong>Used by:</strong> Network traffic shaping, APIs needing stable rate</li>
+    </ul>
+</div>
+<div class="key-concept">
+    <h4>🔹 Sliding Window Log (Accurate but Heavy)</h4>
+    <ul>
+        <li>Store timestamp of each request</li>
+        <li>Remove timestamps outside time window from current time t</li>
+        <li>Allow request if count within limit</li>
+        <li>Highly accurate rate limiting</li>
+        <li>There is no one consuming contunuosly, when a req comes we check how many we processed and based on that we accept or reject</li>
+        <li><strong>Cons:</strong> High memory usage (stores all requests), cleanup overhead</li>
+        <li><strong>Used by:</strong> Systems needing strict accuracy</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Sliding Window Counter (Optimized Approximation)</h4>
+    <ul>
+        <li>Divide time into fixed intervals (window_size)</li>
+        <li><strong>Interval:</strong> Fixed time range based on system time (e.g., [0–10), [10–20))</li>
+        <li><strong>Bucket calculation:</strong> bucket_id = floor(current_time / window_size)</li>
+
+        <li><strong>Current bucket:</strong> count of requests in current interval</li>
+        <li><strong>Previous bucket:</strong> count of requests in last interval</li>
+
+        <li>
+            <strong>How requests are tracked:</strong>
+            <ul>
+                <li>If bucket_id == current → increment current_count</li>
+                <li>If bucket changes → shift current → previous, reset current</li>
+                <li>If gap > 1 bucket → reset both counts</li>
+            </ul>
+        </li>
+
+        <li>
+            <strong>Effective count:</strong><br>
+            current_count + previous_count × (remaining_time / window_size)
+        </li>
+
+        <li><strong>Pros:</strong> Low memory, fast (O(1))</li>
+        <li><strong>Cons:</strong> Approximate (less accurate than sliding log)</li>
+        <li><strong>Used by:</strong> High-scale APIs needing efficiency</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Distributed Rate Limiting</h4>
+    <ul>
+        <li><strong>Challenge:</strong> Race condition (concurrent read-modify-write), Synchronijation issue across nodes of web server</li>
+        <li>Locks are obvious solution but it will slow down the system.</li>
+        <li><strong>Solution:</strong> Lua scripts for race conditions in Redis (atomic operations)</li>
+        <li><strong>Solution:</strong> Having centralid reddis for synchronition, so no need to store counts on web servers</li>
+        <li><strong>Storage:</strong> Redis cluster for central data store (non-sticky sessions)</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Performance Optimizations</h4>
+    <ul>
+        <li>Multi-data centre</li>
+        <li>Eventual consistency for Consistency across data centre</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Monitoring</h4>
+    <ul>
+        <li>Analytics for:</li>
+        <li>The rate limiting algorithm is effective.</li>
+        <li>The rate limiting rules are effective.</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 HTTP Headers</h4>
+    <table>
+        <tr><th>Header</th><th>Description</th></tr>
+        <tr><td>X-Ratelimit-Remaining</td><td>Remaining requests in window</td></tr>
+        <tr><td>X-Ratelimit-Limit</td><td>Total allowed requests</td></tr>
+        <tr><td>X-Ratelimit-Retry-After</td><td>Seconds to wait</td></tr>
+        <tr><td>HTTP 429</td><td>Too Many Requests</td></tr>
+    </table>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Rate Limiter Architecture Flow</h4>
+    <img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/rateLimiterDesign.png" />
+</div>
+
+<!-- CHAPTER 5 -->
+<h2 id="ch5">📖 Chapter 5: Design Consistent Hashing</h2>
+
+<div class="summary-box">
+    <strong>📋 SUMMARY</strong><br>
+    Distributes data/load across servers while minimizing reorganization when servers change. Traditional hash fails when N changes (rehashes everything). Consistent hashing only remaps K/N keys on average. Used by DynamoDB, Cassandra, Discord.
+</div>
+
+<div class="key-concept">
+    <h4>🔹 The Problem</h4>
+    <ul>
+        <li>Traditional: <code>serverIndex = hash(key) % N</code></li>
+        <li>When N changes → most keys remap</li>
+        <li>Causes cache avalanche/miss storm</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Consistent Hashing Ring</h4>
+    <ul>
+        <li>Hash servers and keys onto circular ring (0 to 2^n-1)</li>
+        <li>Keys map to first server found clockwise</li>
+        <li>Adding/removing server only affects neighbors</li>
+        <li>Average keys moved: K/N</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Virtual Nodes (VNodes)</h4>
+    <ul>
+        <li>Each physical server → multiple virtual nodes</li>
+        <li>More virtual nodes = more even distribution</li>
+        <li>Typical: 100-200 virtual nodes per server</li>
+        <li><strong>Trade-off:</strong> Memory vs. distribution evenness</li>
+    </ul>
+</div>
+
+<!-- CHAPTER 6 -->
+<h2 id="ch6">📖 Chapter 6: Design A Key-Value Store</h2>
+
+<div class="summary-box">
+    <strong>📋 SUMMARY</strong><br>
+    Design a distributed KV store like DynamoDB, Cassandra. Based on CAP theorem: must choose Consistency or Availability (Partition tolerance is required). Core: partitioning, replication, consistency, failure handling.
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Basic</h4>
+    <ul>
+        <li>We can store everything in memory in a single server,but data is a issue</code></li>
+        <li>Data Compression can be used</li>
+        <li>Store frequently used data in memory rest on disk, but this also fails after some time.</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 CAP Theorem</h4>
+    <ul>
+        <li><strong>C (Consistency):</strong> All nodes see same data</li>
+        <li><strong>A (Availability):</strong> System responds to every request</li>
+        <li><strong>P (Partition Tolerance):</strong> Works despite network failures</li>
+    </ul>
+    <div class="highlight">
+        Must choose P (network failures inevitable). Then: <strong>CP</strong> (banking) or <strong>AP</strong> (social media)
+    </div>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Data Partitioning (Sharding)</h4>
+    <ul>
+        <li><strong>Goal:</strong> Even data distribution + minimal data movement</li>
+        <li><strong>Technique:</strong> Consistent Hashing</li>
+        <li>Servers placed on a <strong>hash ring</strong></li>
+        <li>Key stored on <strong>first server clockwise</strong></li>
+        <li><strong>Virtual nodes:</strong> More nodes for higher capacity servers</li>
+        <li><strong>Advantage:</strong> Easy scaling (add/remove servers with minimal rebalancing)</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Data Replication</h4>
+    <ul>
+        <li><strong>N</strong> = Number of replicas</li>
+        <li>After key placement, walk clockwise</li>
+        <li>Select first <strong>N unique physical servers</strong></li>
+        <li>Replication is <strong>asynchronous</strong></li>
+        <li>Replicas placed across <strong>different data centers</strong> for reliability</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Quorum Consensus (Consistency), to synchronije data across replicas</h4>
+    <ul>
+        <li><strong>N</strong> = Number of replicas</li>
+        <li><strong>W</strong> = Write quorum (ACKs needed)</li>
+        <li><strong>R</strong> = Read quorum (responses needed)</li>
+    </ul>
+    <table>
+        <tr><th>Config</th><th>Behavior</th></tr>
+        <tr><td>W + R > N</td><td>Strong consistency guaranteed</td></tr>
+        <tr><td>W = 1</td><td>Fast writes, risk of data loss</td></tr>
+        <tr><td>R = 1</td><td>Fast reads, may read stale</td></tr>
+    </table>
+</div>
+
+
+
+<div class="key-concept">
+    <h4>🔹 Failure Handling</h4>
+    <ul>
+        <li><strong>Gossip Protocol:</strong> Nodes periodically share membership info</li>
+        <li><strong>Sloppy Quorum + Hinted Handoff:</strong> Temporary failures</li>
+        <li><strong>Merkle Trees:</strong> Detect & sync inconsistent data</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Failure Detection (Gossip Protocol)</h4>
+    <ul>
+        <li>No single node declares failure</li>
+        <li>Each node keeps membership list + heartbeat counter</li>
+        <li>Heartbeats shared with random nodes periodically</li>
+        <li>No heartbeat for threshold time → mark node down</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Handling Temporary Failures</h4>
+    <ul>
+        <li><strong>Sloppy Quorum:</strong> Use first W/R healthy nodes</li>
+        <li><strong>Hinted Handoff:</strong> Healthy node stores data temporarily</li>
+        <li>When failed node recovers → data handed back</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Handling Permanent Failures</h4>
+    <ul>
+        <li><strong>Anti-Entropy:</strong> Sync replicas periodically</li>
+        <li><strong>Merkle Trees:</strong> Hash tree for efficient diff detection</li>
+        <li>Compare root → traverse only mismatched branches</li>
+        <li>Sync only inconsistent buckets (not full data)</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Data Center Outage</h4>
+    <ul>
+        <li>Replicate across multiple data centers</li>
+        <li>System remains available if one DC fails</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Final Architecture</h4>
+    <ul>
+        <li>APIs: <strong>get(key)</strong>, <strong>put(key,value)</strong></li>
+        <li><strong>Coordinator:</strong> Routes client requests</li>
+        <li>Consistent hashing ring</li>
+        <li>Fully decentralized (no single point of failure)</li>
+        <li>Replication across nodes</li>
+    </ul>
+</div>
+<div class="key-concept">
+    <h4>🔹 Key-Value Architecture Flow</h4>
+    <img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/keyValuePair.png"/>
+</div>
+<div class="key-concept">
+    <h4>🔹 Write & Read Path</h4>
+    <p><strong>Write:</strong> Commit log(write request is persisted on a commit log file) → Memory Cache → SSTable (when full memory cache is full)</p>
+    <p><strong>Read:</strong> MemCache → Bloom filter(used to figure out which SSTables might contain the key) → SSTables</p>
+</div>
+
+<!-- CHAPTER 7 -->
+<h2 id="ch7">📖 Chapter 7: Design A Unique ID Generator</h2>
+
+<div class="summary-box">
+    <strong>📋 SUMMARY</strong><br>
+    Generate unique IDs in distributed systems. Requirements: unique, sortable, numeric, 64-bit. Trade-offs: <strong>Sortability vs. Simplicity</strong> (UUID not sortable). Twitter Snowflake is industry standard.
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Approaches Comparison</h4>
+    <table>
+        <tr><th>Approach</th><th>Pros</th><th>Cons</th></tr>
+        <tr><td><strong>UUID</strong></td><td>Simple, no coordination</td><td>128-bit, not sortable</td></tr>
+        <tr><td><strong>Ticket Server</strong></td><td>Simple, numeric</td><td>SPOF, doesn't scale</td></tr>
+        <tr><td><strong>Snowflake ✓</strong></td><td>Sortable, scalable, 64-bit</td><td>Single Point of Failure, Clock sync needed</td></tr>
+    </table>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Twitter Snowflake (64-bit)</h4>
+    <table>
+        <tr><th>1 bit</th><th>41 bits</th><th>5 bits</th><th>5 bits</th><th>12 bits</th></tr>
+        <tr><td>Sign (0)</td><td>Timestamp (69 years)</td><td>Datacenter (32)</td><td>Machine (32)</td><td>Sequence (4096/ms)</td></tr>
+    </table>
+    <p><strong>Throughput:</strong> 4096 × 32 × 32 = 4M IDs/sec per datacenter</p>
+</div>
+
+<!-- CHAPTER 8 -->
+<h2 id="ch8">📖 Chapter 8: Design A URL Shortener</h2>
+
+<div class="summary-box">
+    <strong>📋 SUMMARY</strong><br>
+    Design bit.ly or TinyURL. Core: shorten (long→short) and redirect (short→long). Trade-offs: <strong>301 vs. 302 redirect</strong> (caching vs. analytics). Key design: Base62 encoding with unique ID generator.
+</div>
+
+<div class="key-concept">
+    <h4>🔹 API Endpoints</h4>
+    <ul>
+        <li>URL shortening</li>
+        <ul>
+            <p>POST api/v1/data/shorten</p>
+            <li>request parameter: {longUrl: longURLString}</li>
+            <li>return shortURL</li>
+        </ul>
+        <li>URL redirecting</li>
+        <ul>
+            <p>GET api/v1/shortUrl</p>
+            <li>Return longURL for HTTP redirection</li>
+        </ul>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Redirect Types</h4>
+    <table>
+        <tr><th>301 Permanent</th><th>302 Temporary</th></tr>
+        <tr><td>Browser caches</td><td>Every request hits server</td></tr>
+        <tr><td>Reduces server load</td><td>Better for analytics</td></tr>
+    </table>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Two Approaches</h4>
+    <table>
+        <tr><th>Hash + Collision</th><th>Base62 (Recommended)</th></tr>
+        <tr><td>Hash URL, take first N chars</td><td>Generate unique ID → Base62</td></tr>
+        <tr><td>Handle collisions with DB,by appending a string until unique 1st N chars</td><td>No collisions</td></tr>
+        <tr><td>Same input = same output</td><td>62^7 = 3.5 trillion combos</td></tr>
+    </table>
+</div>
+
+<div class="key-concept">
+    <h4>🚀 High-Level Architecture</h4>
+
+    <ul>
+        <li>👤 <strong>User</strong> sends request → short URL</li>
+        <li>⚖️ <strong>Load Balancer</strong> distributes traffic</li>
+        <li>🖥 <strong>Web Servers</strong> handle application logic</li>
+        <li>⚡ <strong>Cache (Redis)</strong> checked first (fast lookup)</li>
+        <li>🗄 <strong>Database</strong> fallback on cache miss</li>
+        <li>🔁 Return long URL via <strong>HTTP 301 / 302</strong></li>
+        <li>For new long Urls we will assign an integer id to them and hash the id to return short url</li>
+    </ul>
+
+    <div class="highlight">
+        <strong>🧠 Important:</strong> URL Shortener is <strong>read-heavy</strong>.  
+        Redirect traffic is much higher than shorten traffic.  
+        → Aggressive caching is critical.
+    </div>
+</div>
+
+<div class="key-concept">
+    <h4>🔄 Redirect Flow (Step-by-Step)</h4>
+
+    <ol>
+        <li>👤 User enters: <code>tinyurl.com/zn9edcu</code></li>
+        <li>🌐 DNS resolves → Load Balancer</li>
+        <li>⚖️ LB forwards request to Web Server</li>
+        <li>⚡ Web Server checks Cache</li>
+        <li>🗄 If cache miss → Query Database</li>
+        <li>↩️ Return original URL using 301/302 redirect</li>
+    </ol>
+</div>
+
+<div class="key-concept">
+    <h4>🖼 URL Shortener Architecture Diagram</h4>
+
+    <img 
+        src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/urlShortner.png"
+        style="width:100%; border-radius:8px; margin-top:10px;"
+        alt="URL Shortener Architecture Diagram"
+    />
+
+    <p style="margin-top:10px; color:#5f6368;">
+        Flow: User → Load Balancer → Web Servers → Cache → Database → Redirect Response
+    </p>
+</div>
+
+
+<!-- CHAPTER 9 -->
+<h2 id="ch9">📖 Chapter 9: Design A Web Crawler</h2>
+
+<div class="summary-box">
+    <strong>📋 SUMMARY</strong><br>
+    Design Googlebot. Crawls web to discover/index content. Key challenges: <strong>Politeness</strong> (don't overwhelm servers), <strong>Deduplication</strong>, <strong>Scale</strong> (billions of pages). Trade-offs: Freshness vs. Politeness, BFS preferred over DFS.
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Workflow</h4>
+    <p>Seed URLs → URL Frontier → Fetch → Parse → Dedup → Store → Extract URLs → Repeat</p>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Non-functional requirements</h4>
+    <ul>
+        <li>Scalability: billions of pages to read</li>
+        <li>Robustness: The web is full of traps. Bad HTML, unresponsive servers, crashes,
+            malicious links, etc.</li>
+        <li>Politeness: Not too many requests within short period of time</li>
+        <li>Extensibility: Min changes to support new content types</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Core Components</h4>
+    <ul>
+        <li><strong>DFS vs BFS:</strong> BFS is used</li>
+        <li><strong>URL Frontier:</strong> Priority queues + per-host queues for politeness
+        <ul>
+            <li>Politeness:
+                <p><img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/webCrawler1.png"/></p>
+            </li>
+            <li>Priority:
+                <p><img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/webCrawler2.png"/></p>
+            </li>
+            <li><ul>
+                <li>Front queues: manage prioritization</li>
+                <li>Back queues: manage politeness</li>
+            </ul></li>
+            <li>Storage for URL Frontier:
+                <p>The majority of URLs are stored on disk, so the storage space
+                    is not a problem. To reduce the cost of reading from the disk and writing to the disk, we
+                    maintain buffers in memory for enqueue/dequeue operations. Data in the buffer is
+                    periodically written to the disk.</p>
+            </li>
+        </ul>
+        </li>
+        <li><strong>Freshness:</strong> Must recrwal to update pages, recrawl on page update history and recrwal imp pages 1st and more frequently</li>
+        <li><strong>HTML Downloader:</strong> Respects robots.txt</li>
+        <li><strong>Performance Optimizations:</strong> Distributed crawl, Cache DNS Resolver, Locality(crawler closer to website host), Short timeout(for late or no responses)</li>
+        <li><strong>Robustness:</strong> Consistent hashing(to distribute load), Save crawl states and data(to guard against failures), Exception handling, Data validation</li>
+        <li><strong>Extensibility</strong></li>
+        <li><strong>Detect and avoid problematic content: </strong>Redundant content(hashes or checksums), Spider traps(keep a max length of url), Data noise(adds,spam etc.)</li>
+        <li><strong>Content Dedup:</strong> SimHash/MinHash for similarity</li>
+        <li><strong>URL Dedup:</strong> Bloom Filter (space-efficient)</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Politeness</h4>
+    <ul>
+        <li>Cache and respect robots.txt</li>
+        <li>Maintain per-host delay (1 request/sec)</li>
+        <li>Use separate queues per host</li>
+    </ul>
+</div>
+
+<!-- CHAPTER 10 -->
+<h2 id="ch10">📖 Chapter 10: Design A Notification System</h2>
+
+<div class="summary-box">
+    <strong>📋 SUMMARY</strong><br>
+    Send push (iOS/Android), SMS, email at scale. Key challenges: <strong>Reliability</strong> (don't lose notifications), <strong>Scalability</strong> (handle spikes). Trade-off: At-least-once vs. Exactly-once delivery.
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Notification Types</h4>
+    <table>
+        <tr><th>Type</th><th>Provider</th><th>Key Info</th></tr>
+        <tr><td>iOS Push</td><td>APNs (Apple)</td><td>Device token</td></tr>
+        <tr><td>Android Push</td><td>FCM (Firebase)</td><td>Registration token</td></tr>
+        <tr><td>SMS</td><td>Twilio, Nexmo</td><td>Phone number</td></tr>
+        <tr><td>Email</td><td>SendGrid, SES</td><td>Email address</td></tr>
+    </table>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Contact info gathering flow</h4>
+    <ul>
+        <li>Collect user info and device token while user logs in to the app</li>
+        <li>Store info in relational db</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Reliability</h4>
+    <ul>
+        <li>Persist notifications before sending</li>
+        <li>Retry with exponential backoff</li>
+        <li>Dead letter queue for failed notifications that have failed max retries times</li>
+        <li>Deduplication (event_id + user_id)</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Additional components and considerations</h4>
+    <ul>
+        <li>Notification template</li>
+        <li>Notification setting(opt in etc.)</li>
+        <li>Rate limiting</li>
+        <li>Retry mechanism</li>
+        <li>Security in push notifications
+            <p>For iOS or Android apps, appKey and appSecret are used to secure push notification APIs
+                [6]. Only authenticated or verified clients are allowed to send push notifications using our
+                APIs.</p>
+        </li>
+        <li>Monitor queued notifications, to check if delay then add more workers else reduce workers etc.</li>
+        <li>Events tracking for error, unsubscribe and success etc.</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🖼 Notification System Architecture Diagram</h4>
+
+    <img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/notificationSystem.png"/>
+</div>
+
+
+<!-- CHAPTER 11 -->
+<h2 id="ch11">📖 Chapter 11: Design A News Feed System</h2>
+
+<div class="summary-box">
+    <strong>📋 SUMMARY</strong><br>
+    Design Facebook/Twitter feed. Two operations: <strong>Publishing</strong> and <strong>Building</strong> feed. Key trade-off: <strong>Push vs. Pull</strong> (or hybrid). Push = fast read, expensive for celebrities; Pull = slow read, cheap write.
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Newsfeed APIs</h4>
+    <ul>
+        <li>POST /v1/me/feed<ul>
+            <p>Params:</p>
+            <li>content: content is the text of the post.</li>
+            <li>auth_token: it is used to authenticate API requests</li>
+        </ul></li>
+        <li>GET /v1/me/feed<ul>
+            <p>Params:</p>
+            <li>auth_token: it is used to authenticate API requests</li>
+        </ul></li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Feed publishing Flow</h4>
+    <img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/newsFeedPublishingFlow.png"/>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Newsfeed building Flow</h4>
+    <img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/newsfeedBuildingFlow.png"/>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Fanout Models</h4>
+    <table>
+        <tr><th>Push (Fanout on Write)</th><th>Pull (Fanout on Read)</th></tr>
+        <tr><td>Precompute on post</td><td>Compute on request</td></tr>
+        <tr><td class="pros">Fast read</td><td class="cons">Slow read</td></tr>
+        <tr><td class="cons">Slow write for celebrities</td><td class="pros">No hotkey problem</td></tr>
+    </table>
+    <div class="highlight">
+        <strong>Hybrid (Recommended):</strong> Push for most users, Pull for celebrities
+        <p>An example of what the news feed looks like in cache (post_id,user_id), (post_id,user_id)</p>
+    </div>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Feed Ranking</h4>
+    <ul>
+        <li>Affinity (closeness to poster)</li>
+        <li>Post popularity (likes, comments)</li>
+        <li>Post freshness</li>
+        <li>User engagement history</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Cache architecture</h4>
+    <img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/cacheArchitectureForNewsFeed.png"/>
+</div>
+
+<!-- CHAPTER 12 -->
+<h2 id="ch12">📖 Chapter 12: Design A Chat System</h2>
+
+<div class="summary-box">
+    <strong>📋 SUMMARY</strong><br>
+    Design WhatsApp/Messenger/Slack. Support 1-on-1 and group chat. Key: <strong>Real-time messaging</strong> requires persistent connections. Trade-off: WebSocket (better) vs. Long Polling.
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Communication Protocols</h4>
+    <table>
+        <tr><th>Protocol</th><th>Description</th></tr>
+        <tr><td>HTTP Polling</td><td>Inefficient, high latency</td></tr>
+        <tr><td>Long Polling</td><td>Better, but still has overhead</td></tr>
+        <tr><td><strong>WebSocket ✓</strong></td><td>Bidirectional, low latency, efficient</td></tr>
+    </table>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Key Components</h4>
+    <ul>
+        <li><strong>Chat Servers:</strong> Stateful (maintain WS connections)</li>
+        <li><strong>Presence Service:</strong> Online/offline via heartbeat</li>
+        <li><strong>Message Storage:</strong> Cassandra/HBase with Snowflake IDs</li>
+        <li><strong>Multi-device Sync:</strong> cur_max_message_id per device</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Group Chat</h4>
+    <ul>
+        <li><strong>Small groups:</strong> Copy message to each member's queue</li>
+        <li><strong>Large groups:</strong> Fan-out on read</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Storage</h4>
+    <ul>
+        <li>For user info we can use robust rdbms, replication and sharding are common techniques to satisfy availability and scalability</li>
+        <li>chat history data can be stored in a kv data base for easy horintal scaling,quick access, and handle long tail of data</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Architecture Diagrams</h4>
+    <h4>High Level Design</h4>
+    <img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/highLevelDesignOfChatSystem.png"/>
+    <img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/highLevelDesignOfChatSystem1.png"/>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Data models</h4>
+    <ul>
+        <li>Message table for 1 on 1 chat (message_id,message_from,message_to,content,created_at)</li>
+        <li>Message table for group chat (channel_id,message_id,user_id,content,created_at)</li>
+        <li>Message id can be local message ids unique to a group</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Service discovery</h4>
+    <ul>
+        <li>serviceDiscoveryChatSystem
+            <p><img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/serviceDiscoveryChatSystem.png"/></p>
+        </li>
+        <li>1 on 1 chat flow
+        <p><img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/1on1ChatFlow.png"/></p>
+        </li>
+        <li>Message synchronization across multiple devices
+            <p><img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/messageSyncAcrossMultipleDevices.png"/></p>
+        </li>
+        <li>Small group chat flow
+            <p><img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/smallGroupChatFlow.png"/></p>
+            <p><img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/smallGroupChatFlow1.png"/></p>
+        </li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Online presence</h4>
+    <ul>
+        <li>User login
+            <p><img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/onlinePresenceUserLogin.png"/></p>
+        </li>
+        <li>User logout
+            <p><img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/onlinePresenceLogout.png"/></p>
+        </li>
+        <li>User disconnection
+            <p><img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/userDisconnection.png"/></p>
+        </li>
+        <li>Online status fanout
+            <p><img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/onlineStatusFanout.png"/></p>
+        </li>
+        
+    </ul>
+</div>
+
+<!-- CHAPTER 13 -->
+<h2 id="ch13">📖 Chapter 13: Design A Search Autocomplete System</h2>
+
+<div class="summary-box">
+    <strong>📋 SUMMARY</strong><br>
+    Design Google's typeahead. Must return suggestions within <strong>100ms</strong>. Key data structure: <strong>Trie</strong> (prefix tree). Trade-off: Freshness vs. Performance (can't update trie in real-time at scale).
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Trie with Top K Caching</h4>
+    <p>Bcoj querying an rdms is inefficient</p>
+    <ul>
+        <li>Each node stores: character, children, top K suggestions</li>
+        <li>Pre-compute top K for each prefix → O(1) lookup</li>
+        <li><strong>Trade-off:</strong> More storage, much faster reads</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 System Components</h4>
+    <ul>
+        <li><strong>Data Gathering:</strong> Query logs → MapReduce → Weekly batch
+        <p><img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/dataGatheringService.png"/></p>
+    <ul>
+        <p><strong>Trie DB</strong></p>
+        <li>Document store: Since a new trie is built weekly, we can periodically take a snapshot of it,
+            serialize it, and store the serialized data in the database. Document stores like MongoDB [4]
+            are good fits for serialized data.</li>
+        <li>Key-value store: A trie can be represented in a hash table form [4] by applying the
+            following logic:
+            • Every prefix in the trie is mapped to a key in a hash table.
+            • Data on each trie node is mapped to a value in a hash table.</li>
+    </ul>
+    </li>
+        <li><strong>Query Service:</strong> Cache first → Trie lookup
+            <p>In case the data is not in Trie Cache, we replenish data back to the cache. This way, all
+                subsequent requests for the same prefix are returned from the cache. A cache miss can
+                happen when a cache server is out of memory or offline.</p>
+        <p><img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/queryServiceSearch.png"/></p>
+        <ul>
+            <p><strong>Query service optimijations</strong></p>
+            <li>AJAX request(sends req without refreshing page)</li>
+            <li>Browser caching(cache results in browser)</li>
+            <li>Data sampling(log only 1 out of N queries in logs for large scale)</li>
+        </ul>
+        </li>
+        <li><strong>Filter Layer:</strong> Remove inappropriate suggestions</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Scaling</h4>
+    <ul>
+        <li>Shard by prefix, shard manager splits based on historical query pattern smartly
+            <p><img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/scalingStorage.png"/>
+            </p>
+        </li>
+        <li>CDN caching for top prefixes</li>
+        <li>~1GB trie fits in memory</li>
+    </ul>
+</div>
+
+<!-- CHAPTER 14 -->
+<h2 id="ch14">📖 Chapter 14: Design YouTube</h2>
+
+<div class="summary-box">
+    <strong>📋 SUMMARY</strong><br>
+    Design video streaming platform. Key challenges: <strong>Upload/transcoding</strong>, <strong>Adaptive streaming</strong>, <strong>Scale</strong> (billions of views). Trade-offs: Storage cost vs. Quality options, Processing time vs. Format coverage.
+</div>
+
+<div class="key-concept">
+    <h4>🔹 High level design</h4>
+    <ul>
+        <li><p><img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/youtubeHighLevelDesign.png"/></p></li>
+        <li>Video uploading flow
+            <ul>
+                <li>upload the actual video
+                    <p><img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/videoUploadingFlowYoutube.png"/></p>
+                </li>
+                <li>update the metadata
+                    <p><img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/updateMetadataYoutube.png"/></p>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Video Transcoding</h4>
+    <ul>
+        <li>Convert to multiple formats (MP4, HLS, DASH)</li>
+        <li>Multiple resolutions (360p, 720p, 1080p, 4K)</li>
+        <li>Multiple bitrates per resolution</li>
+        <li>DAG (Directed Acyclic Graph) for parallel processing
+            <p><img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/dagModelYoutube.png"/></p>
+            <p><img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/videoEncodingsYoutube.png"/></p>
+        </li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🎬 Video Transcoding Architecture (Cloud-Based)</h4>
+
+    <img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/videoTranscodingArchitectureYoutube.png" alt="Overall Architecture" style="width:100%; border-radius:8px;">
+
+    <p><strong>Flow:</strong> Preprocessor → DAG Scheduler → Resource Manager → Task Workers → Encoded Video</p>
+
+    <p><strong>Core Components:</strong> Preprocessor, DAG Scheduler, Resource Manager, Task Workers, Temporary Storage</p>
+
+    <hr>
+
+    <p><strong>🔹 Preprocessor:</strong><br>
+    • Splits video into GOP chunks (independent playable units)<br>
+    • Handles compatibility (older devices)<br>
+    • Generates DAG from config<br>
+    • Caches GOPs + metadata in temporary storage (for retry)
+    </p>
+
+    <img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/dagExampleYoutube.png" alt="DAG Example" style="width:60%; display:block; margin:auto;">
+
+    <p><strong>DAG Example:</strong> Download → Transcode</p>
+
+    <hr>
+
+    <p><strong>🔹 DAG Scheduler:</strong><br>
+    • Breaks DAG into stages and tasks<br>
+    • Pushes tasks to resource manager queue<br>
+    • Enables parallel execution
+    </p>
+
+    <img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/dagSchedulerYoutube.png" alt="DAG Stages" style="width:100%; border-radius:8px;">
+
+    <p><strong>Stages:</strong><br>
+    Stage 1 → Video / Audio / Metadata<br>
+    Stage 2 → Encoding, Thumbnail, Audio Encoding
+    </p>
+
+    <hr>
+
+    <p><strong>🔹 Resource Manager:</strong><br>
+    • Manages task execution efficiently<br>
+    • Uses queues + scheduler
+    </p>
+
+    <img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/resourceManagerYoutube.png" alt="Resource Manager" style="width:100%; border-radius:8px;">
+
+    <p>
+    • Task Queue → pending tasks (priority)<br>
+    • Worker Queue → available workers<br>
+    • Running Queue → active tasks<br>
+    • Scheduler → assigns best worker to task
+    </p>
+
+    <hr>
+
+    <p><strong>🔹 Task Workers:</strong><br>
+    • Execute DAG tasks<br>
+    • Specialized workers for different jobs
+    </p>
+
+    <img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/taskWorkersYoutube.png" alt="Workers" style="width:60%; display:block; margin:auto;">
+
+    <p>Examples: Encoder, Thumbnail, Watermark, Merger</p>
+
+    <hr>
+
+    <p><strong>🔹 Temporary Storage:</strong><br>
+    • Stores intermediate data (GOPs, metadata)<br>
+    • Enables retry & fault tolerance<br>
+    • Uses different storage types (memory, blob)
+    </p>
+
+    <hr>
+
+    <p><strong>🔹 Output:</strong><br>
+    • Final encoded video (e.g., 720p, mp4)
+    </p>
+
+    <hr>
+
+    <p><strong>🎯 Key Insights:</strong><br>
+    • DAG enables parallel & flexible processing<br>
+    • Queue-based system improves scalability<br>
+    • Temporary storage ensures reliability<br>
+    • Workers can scale horizontally
+    </p>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Adaptive Bitrate Streaming</h4>
+    <ul>
+        <li>Video split into small chunks (2-10 sec)</li>
+        <li>Multiple bitrate versions of each chunk</li>
+        <li>Client selects bitrate based on bandwidth</li>
+        <li>Protocols: HLS (Apple), DASH (Standard)</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Optimizations</h4>
+    <ul>
+        <li>Parallel chunk upload, allows fast resumable uploads when the previous upload failed
+            <p><img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/parallelVideoUploading.png" alt="Workers" style="width:60%; display:block; margin:auto;"></p>
+        </li>
+        <li>place upload centers close to users</li>
+        <li>parallelism everywhere
+            <p><img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/messageQueuesYoutube.png" alt="Workers" style="width:60%; display:block; margin:auto;"></p>
+        </li>
+        <li>Pre-signed URLs for direct upload
+            <p>1. Client → Backend → get signed URL
+                2. Client → S3 (direct upload using URL)
+            Backend doesnt come into picture no need to expose credentials, only a small path access that too for shot period of time.</p>
+        </li>
+        <li>protect your videos, AES encryption for playback, Visual watermarking</li>
+        <li>Video deduplication</li>
+        <li>Lazy encode rare formats on demand</li>
+        <li>CDN for popular videos only</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Cost-saving optimization</h4>
+    <ul>
+        <li>Only serve the most popular videos from CDN and other videos from our high capacity
+            storage video servers</li>
+        <li>For less popular content, we may not need to store many encoded video versions. Short
+            videos can be encoded on-demand</li>
+        <li>Some videos are popular only in certain regions. There is no need to distribute these
+            videos to other regions</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Error Handling & Fault Tolerance</h4>
+
+    <p><strong>Types of Errors:</strong><br>
+    • Recoverable → Retry (e.g., transcoding failure)<br>
+    • Non-recoverable → Stop + return error (e.g., invalid format)
+    </p>
+
+    <p><strong>🔄 Retry Strategy:</strong><br>
+    Retry few times → if still failing → return error
+    </p>
+
+    <p><strong>🧩 Component-wise Handling:</strong><br>
+    Upload → Retry<br>
+    Split Video → Fallback to server-side split<br>
+    Transcoding → Retry<br>
+    Preprocessor → Regenerate DAG<br>
+    DAG Scheduler → Reschedule task<br>
+    Resource Manager → Use replica queue<br>
+    Task Worker → Retry on new worker<br>
+    API Servers → Stateless → route to another instance<br>
+    Cache → Replication → use other nodes<br>
+    DB Master Down → Promote slave<br>
+    DB Slave Down → Use another slave + replace node
+    </p>
+
+    <p><strong>🎯 Key Idea:</strong><br>
+    Retry + Redundancy + Failover = High availability
+    </p>
+</div>
+
+
+<!-- CHAPTER 15 -->
+<h2 id="ch15">📖 Chapter 15: Design Google Drive</h2>
+
+<div class="summary-box">
+    <strong>📋 SUMMARY</strong><br>
+    Design cloud file storage (Dropbox, OneDrive). Features: upload/download, sync, sharing, versioning. Key challenges: <strong>Consistency</strong> (multi-device), <strong>Reliability</strong>, <strong>Efficiency</strong> (minimize bandwidth). Trade-off: Strong consistency vs. Performance.
+</div>
+
+<div class="key-concept">
+    <h4>🔹 APIs</h4>
+    <ul>
+        <li>Upload a file to Google Drive (simple, resumalble upload)
+            <p>https://api.example.com/files/upload?uploadType=resumable</p>
+            <ul>
+                <li>Params
+                    <ul>
+                        <li>uploadType=resumable</li>
+                        <li>data: Local file to be uploaded.</li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
+        <li>Download a file from Google Drive
+            <p>https://api.example.com/files/download</p>
+            <p>Params : path-> download file path</p>
+        </li>
+        <li>Get file revisions
+            <p>https://api.example.com/files/list_revisions</p>
+            <p>Params:
+                • path: The path to the file you want to get the revision history.
+                • limit: The maximum number of revisions to return.</p>
+        </li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Block Servers (Key Innovation)</h4>
+    <ul>
+        <li>Split files into blocks (4MB typical)</li>
+        <li>Only upload changed blocks (delta sync)</li>
+        <li>Deduplicate identical blocks (content-addressable)</li>
+        <li>Enables efficient versioning</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Sync Conflicts</h4>
+    <ul>
+        <li>First version that proceeds wins</li>
+        <li>Second one recieves conflict</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 High-level design</h4>
+    <p><img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/highLevelDesignGoogleDrive.png" alt="Workers" style="width:60%; display:block; margin:auto;"></p>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Delta Sync</h4>
+    <p>Original: [Block1] [Block2] [Block3] [Block4]</p>
+    <p>Modified: [Block1] [<span style="color:red">Block2'</span>] [Block3] [Block4] [<span style="color:green">Block5</span>]</p>
+    <p><strong>Upload only:</strong> Block2' (changed), Block5 (new)</p>
+    <p>Compression on block also reduce the data sije</p>
+    <p><img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/blockServersGoogleDrive.png" alt="Workers" style="width:60%; display:block; margin:auto;"></p>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 High Consistency Requirement</h4>
+
+    <p><strong>Goal:</strong><br>
+    Ensure all clients see the same data (no inconsistencies)
+    </p>
+
+    <p><strong>🔒 Cache Consistency:</strong><br>
+    • Cache replicas must match source of truth<br>
+    • Invalidate cache on DB writes<br>
+    • Avoid stale reads across replicas
+    </p>
+
+    <p><strong>🧱 Database Choice:</strong><br>
+    • SQL → Strong consistency via ACID (default)<br>
+    • NoSQL → Eventual consistency (needs custom handling)
+    </p>
+
+    <p><strong>⚙️ Strategy:</strong><br>
+    Cache invalidation + DB as source of truth
+    </p>
+
+    <p><strong>🎯 Key Insight:</strong><br>
+    Strong consistency = coordination + invalidation
+    </p>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Metadata database</h4>
+    <p><img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/metadataGoogleDrive.png" alt="Workers" style="width:60%; display:block; margin:auto;"></p>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Upload flow</h4>
+    <p><img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/uploadFlowGoogleDrive.png" alt="Workers" style="width:60%; display:block; margin:auto;"></p>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Download flow</h4>
+    <p><img src="/Users/indreshbharadwaj/Desktop/hldCheatsheetImages/dowloadFlowGoogleDrive.png" alt="Workers" style="width:60%; display:block; margin:auto;"></p>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Save storage space</h4>
+    <ul>
+        <li>De-duplicate data blocks, eliminate redundant blocks</li>
+        <li>Adopt an intelligent data backup strategy
+            <ul>
+                <li>Set a limit, for max versions</li>
+                <li>Keep valuable versions only, for too frequent updates we can keep only certain copies and keep recent copies</li>
+                <li>Moving infrequently used data to cold storage</li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Core Components</h4>
+    <ul>
+        <li><strong>Block Storage:</strong> S3, content-addressable</li>
+        <li><strong>Metadata DB:</strong> File info, blocks, versions, sharing</li>
+        <li><strong>Notification Service:</strong> Long polling/WebSocket for sync</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Reliability</h4>
+    <ul>
+        <li>3+ copies across data centers</li>
+        <li>Erasure coding for space efficiency</li>
+        <li>Checksums to detect corruption</li>
+        <li>Encryption at rest (AES-256) and in transit (TLS)</li>
+    </ul>
+</div>
+
+<div class="key-concept">
+    <h4>🔹 Failure Handling & Resilience</h4>
+
+    <p><strong>🎯 Goal:</strong><br>
+    Ensure system availability using redundancy, failover, and recovery
+    </p>
+
+    <p><strong>⚙️ Infrastructure Failures:</strong><br>
+    Load Balancer → Heartbeat → failover to secondary<br>
+    Block Server → Other servers pick unfinished jobs<br>
+    Cloud Storage → Multi-region replication (fetch from other region)
+    </p>
+
+    <p><strong>🖥️ Service Failures:</strong><br>
+    API Servers → Stateless → redirect traffic via LB<br>
+    Notification Service → Clients reconnect on failure (gradual recovery)
+    </p>
+
+    <p><strong>🧠 Cache & Queue:</strong><br>
+    Cache → Replicated → use other nodes + replace failed one<br>
+    Queue → Replicated → switch to backup queue
+    </p>
+
+    <p><strong>🗄️ Database Failures:</strong><br>
+    Master Down → Promote slave → create new slave<br>
+    Slave Down → Use other slaves → replace node
+    </p>
+
+    <p><strong>🎯 Key Strategy:</strong><br>
+    Replication + Failover + Retry = High availability
+    </p>
+</div>
+
+<!-- QUICK REFERENCE -->
+<div class="quick-ref" id="quickref">
+    <h2>🎯 Quick Reference - Key Trade-offs</h2>
+    <table>
+        <tr><th>Topic</th><th>Trade-off</th></tr>
+        <tr style="background-color: #1a1a2e;"><td>Scaling</td><td>Simplicity vs. Scalability</td></tr>
+        <tr><td>CAP</td><td>Consistency vs. Availability</td></tr>
+        <tr style="background-color: #1a1a2e;"><td>Caching</td><td>Freshness vs. Performance</td></tr>
+        <tr><td>Rate Limiting</td><td>User Experience vs. Protection</td></tr>
+        <tr style="background-color: #1a1a2e;"><td>Consistent Hashing</td><td>Even Distribution vs. Complexity</td></tr>
+        <tr><td>News Feed</td><td>Push (fast read) vs. Pull (cheap write)</td></tr>
+        <tr style="background-color: #1a1a2e;"><td>Chat</td><td>WebSocket (real-time) vs. Polling (simple)</td></tr>
+        <tr><td>URL Shortener</td><td>301 (cache) vs. 302 (analytics)</td></tr>
+        <tr style="background-color: #1a1a2e;"><td>Autocomplete</td><td>Freshness vs. Performance</td></tr>
+        <tr><td>Video</td><td>Quality vs. Storage/Processing cost</td></tr>
+        <tr style="background-color: #1a1a2e;"><td>File Sync</td><td>Strong Consistency vs. Performance</td></tr>
+    </table>
+</div>
+
+<div class="key-concept">
+    <h4>🎯 Universal Design Patterns</h4>
+    <ol>
+        <li><strong>Load Balancing</strong> - Distribute traffic</li>
+        <li><strong>Caching</strong> - Redis/Memcached for hot data</li>
+        <li><strong>CDN</strong> - Static content delivery</li>
+        <li><strong>Message Queue</strong> - Async processing, decoupling</li>
+        <li><strong>Database Sharding</strong> - Horizontal scaling</li>
+        <li><strong>Consistent Hashing</strong> - Distributed data</li>
+        <li><strong>Replication</strong> - Availability & durability</li>
+        <li><strong>Rate Limiting</strong> - Protection</li>
+        <li><strong>Monitoring</strong> - Metrics, logging, alerting</li>
+    </ol>
+</div>
+
+<div class="key-concept">
+    <h4>🎯 Numbers to Remember</h4>
+    <table>
+        <tr><th>Metric</th><th>Value</th></tr>
+        <tr><td>QPS for 1M DAU</td><td>~12 QPS (avg), ~24 QPS (peak)</td></tr>
+        <tr><td>1 day in seconds</td><td>86,400 ≈ 100,000</td></tr>
+        <tr><td>SSD random read</td><td>150 μs</td></tr>
+        <tr><td>HDD seek</td><td>10 ms</td></tr>
+        <tr><td>Round trip same DC</td><td>500 μs</td></tr>
+        <tr><td>99.99% availability</td><td>52 min downtime/year</td></tr>
+        <tr><td>1 TB</td><td>2^40 bytes</td></tr>
+    </table>
+</div>
+
+<p style="text-align: center; color: #5f6368; margin-top: 40px; padding: 20px; border-top: 1px solid #e0e0e0;">
+    <em>Created: February 2026 | Source: System Design Interview by Alex Yu</em>
+</p>
+
+</body>
+</html>
+
